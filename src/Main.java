@@ -4,10 +4,10 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
 
-        Company company = new Company(100_000_000);
+        Company2 company = new Company2(100_000_000);
 
         //создаем 180 операторов
-        ArrayList<Employee> operatorList = new ArrayList<>();
+        ArrayList<CompareSalary> operatorList = new ArrayList<>();
         for (int i = 0; i < 180; i++) {
             operatorList.add(new Manager("Operator_" + (i + 1)));
         }
@@ -15,7 +15,7 @@ public class Main {
         company.hireAll(operatorList);
 
         //создаем 80 менеджеров
-        ArrayList<Employee> managerList = new ArrayList<>();
+        ArrayList<CompareSalary> managerList = new ArrayList<>();
         for (int i = 0; i < 80; i++) {
             managerList.add(new Manager("Manager_" + (i + 1)));
         }
@@ -23,7 +23,7 @@ public class Main {
         company.hireAll(managerList);
 
         //создаем 10 топ менеджеров
-        ArrayList<Employee> topManagerList = new ArrayList<>();
+        ArrayList<CompareSalary> topManagerList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             topManagerList.add(new TopManager("TopManager_" + (i + 1), company));
         }
@@ -32,7 +32,7 @@ public class Main {
 
         System.out.println("Сортируем по возрастанию и выводим 30 самых низких зарплат в компании");
         //для вывода результата создаем новый список
-        ArrayList<Employee> sorted = new ArrayList<>();
+        ArrayList<CompareSalary> sorted = new ArrayList<>();
         //выводим 30 самых низких зарплат в компании
         sorted = company.getTopSalaryStaff(30);
         //выводим зарплаты
@@ -59,7 +59,7 @@ public class Main {
 
         System.out.println("Сортируем по возрастанию и выводим 30 самых низких зарплат в компании");
         //для выода результата создаем новый список
-        ArrayList<Employee> sortedAfter = new ArrayList<>();
+        ArrayList<CompareSalary> sortedAfter = new ArrayList<>();
         //выводим 30 самых низких зарплат в компании
         sortedAfter = company.getTopSalaryStaff(30);
         //выводим зарплаты

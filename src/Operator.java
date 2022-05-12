@@ -1,4 +1,4 @@
-public class Operator implements Employee {
+public class Operator extends CompareSalary {
     private final String name;
     private final double salary;
 
@@ -16,4 +16,8 @@ public class Operator implements Employee {
         return this.name;
     }
 
+    @Override
+    public int compareTo(Employee o) {
+        return (int)(this.getMonthSalary() - o.getMonthSalary());
+    }
 }

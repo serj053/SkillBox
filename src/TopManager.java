@@ -1,8 +1,8 @@
-public class TopManager implements Employee {
+public class TopManager extends CompareSalary {
     private final String name;
     private final double salary;
 
-    TopManager(String name, Company company) {
+    TopManager(String name, Company2 company) {
         this.name = name;
         //формирование зарплаты сотоящей из фиксированной части
         // и бонуса в 150% от зп если доход компании превысил 10 млн.
@@ -22,4 +22,8 @@ public class TopManager implements Employee {
         return this.name;
     }
 
+    @Override
+    public int compareTo(Employee o) {
+        return (int)(this.getMonthSalary() - o.getMonthSalary());
+    }
 }

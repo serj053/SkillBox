@@ -1,4 +1,4 @@
-class Manager implements Employee {
+class Manager extends CompareSalary {
     private final String name;
     private final double salary;
 
@@ -16,6 +16,11 @@ class Manager implements Employee {
 
     public double getMonthSalary() {
         return salary;
+    }
+
+    @Override
+    public int compareTo(Employee o) {
+        return (int)(this.getMonthSalary() - o.getMonthSalary());
     }
 
 }
