@@ -43,17 +43,15 @@ Document doc;
     class GetStations {
         ArrayList getMetroStation() {
             ArrayList<String> list = new ArrayList<>();
-
-            Elements elements = doc.select("span.js-metro-line");
-            String name;
-            String number;
-            String result;
-            for(Element element: elements){
-                StringBuilder builder = new StringBuilder();
-                name = element.select("span.js-metro-line").html();
-                number = element.attr("data-line");
-                result = builder.append(name +" ").append(number).toString();
-                list.add(result);
+            String line;
+            Elements names = doc.select("div.js-metro-stations");
+            for (Element el : names) {
+                String lineNumber = el.attr("data-line");
+                Elements elements2 = el.select("span.name");
+                for(Element el2 : elements2){
+                    line = "Линия  №" + lineNumber + "  "  +el2.text();
+                    list.add(line);
+                }
             }
             return list;
         }
