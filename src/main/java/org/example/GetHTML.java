@@ -8,9 +8,9 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class getHTML {
+public class GetHTML {
 Document doc;
-    public getHTML() {
+    public GetHTML() {
         String address = "https://skillbox-java.github.io/";
         Document doc;
         try {
@@ -33,7 +33,7 @@ Document doc;
               StringBuilder builder = new StringBuilder();
               name = element.select("span.js-metro-line").html();
               number = element.attr("data-line");
-              result = builder.append(name +" ").append(number).toString();
+              result = builder.append(name).append(" ").append(number).toString();
               list.add(result);
           }
             return list;
