@@ -38,11 +38,9 @@ public class JsParse {
             }
             int flag = 0;
             for(int i = 0 ; i < list.size() -1 ; i++ ){
-                System.out.println(" i -" + i);
-//                if(!list.get(i).station.equals(name)){
-//                    System.out.println("in " + i);
-//                   flag++;
-//                }
+                if(list.get(i).station.equals(name)){
+                   flag++;
+                }
             }
             if(flag == 0){
                 list.add(new StationDepth(name, depth));
