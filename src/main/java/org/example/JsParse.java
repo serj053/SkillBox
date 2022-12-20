@@ -33,7 +33,6 @@ public class JsParse {
             String depth = jobj.get("depth").toString();
             if(list.size() == 0){
                 list.add(new StationDepth(name, depth));
-                System.out.println("Zero");
                 continue;
             }
             int flag = 0;
