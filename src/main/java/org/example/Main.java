@@ -4,9 +4,10 @@ import org.json.simple.parser.ParseException;
 
 import java.io.File;;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -17,11 +18,11 @@ public class Main {
         /*Выводим список путей файлов с определнным расширением */
         System.out.println("/*Выводим список файлов с определнным расширением */");
         FindFileInDirectory filesJs = new FindFileInDirectory();
-        List<String> listJsn = new ArrayList<>();
+        List<String> listJsnPath = new ArrayList<>();
         List<String> listCsv = new ArrayList<>();
         /*возвращает список путей файлов из выбранной папки с определенным расширением*/
-        filesJs.find(new File("data"), listJsn, "json");
-        listJsn.forEach(System.out::println);
+        filesJs.find(new File("data"), listJsnPath, "json");
+        listJsnPath.forEach(System.out::println);
         System.out.println();
         filesJs.find(new File("data"), listCsv, "csv");
         listCsv.forEach(System.out::println);
@@ -31,29 +32,37 @@ public class Main {
         System.out.println("/*Парсинг JSON файла выводим объекты полученные из JSON  файла *****/");
         //создаем объект для парсинга
         JsParse jsObj = new JsParse();
-        List<JsParse.StationDepth> listJs = new ArrayList<>();
+        ArrayList<JsParse.StationDepth> listJs = new ArrayList<>();
         //передаем в метод путь к JSON файлу и массив для  новых объектов и
         // получаем список объектов полученных из Json файла
- // System.out.println(listJsn.get(0));
-        jsObj.getJsonObjects(listJs,listJsn.get(0));
-        jsObj.getJsonObjects(listJs,listJsn.get(1));
-        List<JsParse.StationDepth> listStationDepth = jsObj.getJsonObjects(listJs,listJsn.get(2));
-        System.out.println("size " + listJs.size());
-        AtomicInteger n = new AtomicInteger();
-        listStationDepth.forEach(o-> System.out.println(n.getAndIncrement() +"  " + o));
+        jsObj.getJsonObjects(listJs, listJsnPath.get(0));
+        jsObj.getJsonObjects(listJs, listJsnPath.get(1));
+        List<JsParse.StationDepth> listStationDepth = jsObj.getJsonObjects(listJs, listJsnPath.get(2));
+        for (int i = 0; i < listStationDepth.size(); i++) {
+            System.out.println(i + "   station " + listStationDepth.get(i).getStation()
+                    + ",  depth " + listStationDepth.get(i).getDepth());
+        }
+
         System.out.println("\n");
 
         /*Парсинг CSV фала - выводим объекты полученные из CSV файла*/
         System.out.println("/*Парсинг CSV фала - выводим объекты полученные из CSV файла*/");
         System.out.println("listCsv.get(1) " + listCsv.get(1));
         //получаем список с объектами
+        ArrayList<CsvParse.StationDate> stationDate = new ArrayList<>();
         List<CsvParse.StationDate> list;
-        list = new CsvParse().createObjectFromCsv(listCsv.get(0));
+        CsvParse csvParse = new CsvParse();
+        csvParse.createObjectFromCsv(stationDate, listCsv.get(0));
+        csvParse.createObjectFromCsv(stationDate, listCsv.get(1));
+        list = csvParse.createObjectFromCsv(stationDate, listCsv.get(2));
         AtomicInteger nn = new AtomicInteger();
-        list.forEach(o-> System.out.println(nn.getAndIncrement() + "  " + o));
+        list.forEach(o -> System.out.println(nn.getAndIncrement() + "  " +
+                o.getStationName()  + "  " + o.getDate()));
         System.out.println("\n");
 
-/*Получаем JSON файлы из объектов*/
+        /*Получаем JSON файлы из объектов находящихся в коллекциях
+        * ArrayList<JsParse.StationDepth> listStationDepth
+        * List<CsvParse.StationDate> list */
 //        System.out.println("/*Получаем JSON файлы из объектов*/");
 //        String result = null;
 //        for(JsParse.StationDepth sd : listStationDepth){
@@ -61,7 +70,6 @@ public class Main {
 //            result = objectMapper.writeValueAsString(sd);
 //            System.out.println(result);
 //        }
-
 
 
     }

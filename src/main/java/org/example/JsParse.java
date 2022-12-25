@@ -13,16 +13,14 @@ import java.util.List;
 import java.util.TreeSet;
 
 public class JsParse {
-    //private final FileReader read;
     private final JSONParser parser;
 
     /*в конструктор передается путь рассматриваемого файла */
-    public JsParse() throws FileNotFoundException {
-        // this.read = new FileReader(jsonFile);
+    public JsParse(){
         this.parser = new JSONParser();
     }
 
-    public List<StationDepth> getJsonObjects(List<StationDepth> list, String file)
+    public List<StationDepth> getJsonObjects(ArrayList<StationDepth> list, String file)
             throws IOException, ParseException {
         FileReader read = new FileReader(file);
 
@@ -31,20 +29,18 @@ public class JsParse {
             JSONObject jobj = (JSONObject) obj;
             String name = (String) jobj.get("station_name");
             String depth = jobj.get("depth").toString();
-            if(list.size() == 0){
+            if (list.size() == 0) {
                 list.add(new StationDepth(name, depth));
-                System.out.println("Zero");
                 continue;
             }
             int flag = 0;
-            for(int i = 0 ; i < list.size() -1 ; i++ ){
-                System.out.println(" i -" + i);
-//                if(!list.get(i).station.equals(name)){
-//                    System.out.println("in " + i);
-//                   flag++;
-//                }
+            /*отсекание повторяющихся значенией*/
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).station.equals(name)) {
+                    flag++;
+                }
             }
-            if(flag == 0){
+            if (flag == 0) {
                 list.add(new StationDepth(name, depth));
             }
 
@@ -61,6 +57,14 @@ public class JsParse {
             this.depth = d;
         }
 
+        public String getStation() {
+            return station;
+        }
+
+        public String getDepth() {
+            return depth;
+        }
+
         @Override
         public String toString() {
             return "StationDepth{" +
@@ -68,6 +72,8 @@ public class JsParse {
                     ", depth=" + depth +
                     '}';
         }
+
+
     }
 
 }
