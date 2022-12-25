@@ -69,6 +69,14 @@ public class CsvParse {
             this.date = date;
         }
 
+        public String getStationName() {
+            return stationName;
+        }
+
+        public Date getDate() {
+            return date;
+        }
+
         @Override
         public String toString() {
             return "CsvParse{" +
@@ -77,13 +85,6 @@ public class CsvParse {
                     '}';
         }
 
-        public String getStationName() {
-            return stationName;
-        }
-
-        public Date getDate() {
-            return date;
-        }
     }
 
 }
