@@ -11,9 +11,22 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
+
 public class Main {
 
     public static void main(String[] args) throws IOException, ParseException {
+
+        /*получаем со страницы данные - линии Московского метро и ее номер
+        *                             - станции московского метро и  номер линии*/
+        System.out.println("*получаем со страницы данные\n " +
+                "- линии Московского метро и ее номер" );
+        GetHTML getHTML = new GetHTML();
+        getHTML. new GetLines().getMetroLine().forEach(System.out::println);
+        System.out.println();
+        System.out.println("-название станций и номер линий");
+        System.out.println();
+        getHTML. new GetStations().getMetroStation().forEach(System.out::println);
+        System.out.println();
 
         /*Выводим список путей файлов с определнным расширением */
         System.out.println("/*Выводим список файлов с определнным расширением */");
