@@ -37,6 +37,7 @@ public class JsParse {
             /*отсекание повторяющихся значенией*/
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i).station.equals(name)) {
+
                     flag++;
                 }
             }
