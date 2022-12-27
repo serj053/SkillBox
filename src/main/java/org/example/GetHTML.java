@@ -22,18 +22,20 @@ Document doc;
     }
 
  class GetLines {
+        String numberLine;
+        String metroLine;
       ArrayList getMetroLine() {
           ArrayList<String> list = new ArrayList<>();
 
           Elements elements = doc.select("span.js-metro-line");
-          String name;
-          String number;
+          //String name;
+          //String number;
           String result;
           for(Element element: elements){
               StringBuilder builder = new StringBuilder();
-              name = element.select("span.js-metro-line").html();
-              number = element.attr("data-line");
-              result = builder.append(name).append(" ").append(number).toString();
+              metroLine = element.select("span.js-metro-line").html();
+              numberLine = element.attr("data-line");
+              result = builder.append(metroLine).append(" ").append(numberLine).toString();
               list.add(result);
           }
             return list;
