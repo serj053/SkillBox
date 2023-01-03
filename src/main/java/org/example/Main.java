@@ -1,13 +1,17 @@
 package org.example;
 
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 
 public class Main {
@@ -16,13 +20,20 @@ public class Main {
 
 
 
+
         /*получаем со страницы данные - линии Московского метро и ее номер
          *                             - станции московского метро и  номер линии*/
         System.out.println("*получаем со страницы данные\n " +
                 "- линии Московского метро и ее номер");
         GetHTML getHTML = new GetHTML();
-        ArrayList<String> metroLines = getHTML.new GetLines().getMetroLine();
-        getHTML.new GetLines().getMetroLine().forEach(System.out::println);
+        HashMap<String, String> metroLines ;
+        metroLines = getHTML.new GetLines().getMetroLine();
+        metroLines.entrySet().stream()
+                .map(m -> {
+                    System.out.println(m.getKey() + "  " + m.getValue());
+                    return 0;
+                }).toList();
+
         System.out.println();
         System.out.println("-название станций и номер линий");
         System.out.println();
@@ -82,31 +93,62 @@ public class Main {
         JSONObject obj = new JSONObject();
         obj.put("first", "second");
         System.out.println(obj);
+        /*
+        *
+        * GetHTML getHTML = new GetHTML();
+        ArrayList<String> metroLines = getHTML.new GetLines().getMetroLine();
+        getHTML.new GetLines().getMetroLine().forEach(System.out::println);
+        System.out.println();
+        System.out.println("-название станций и номер линий");
+        System.out.println();
+        ArrayList<String> metroStations = getHTML.new GetStations().getMetroStation();
+        getHTML.new GetStations().getMetroStation().forEach(System.out::println);
+        System.out.println();
+        *
+        * getLine - линии метро список
+        * getStations - станции метро список
+        * */
+
 
         GetHTML html = new GetHTML();
-        ArrayList<String> getLine = new ArrayList<>();
+        Map<String, String> getLine = new HashMap<>();
         ArrayList<String> getStations = new ArrayList<>();
         getLine = html.new GetLines().getMetroLine();
         getStations = html.new GetStations().getMetroStation();
-        for (int i = 0; i < getStations.size(); i++) {
-            for (int j = 1; j < getStations.size(); j++) {
-                String str1 = getStations.get(i).substring(11);
-                String str11 = getStations.get(i).substring(8, 9);
-                String str2 = getStations.get(j).substring(11);
-                String str22 = getStations.get(j).substring(8, 9);
-                if (str1.equals(str2) && !str11.equals(str22)) {
-                    System.out.println("Переход между ветками  "
-                            + str1 + " " + str11 +
-                            " " + str2 + " " + str22
+        for (int i = 0; i < getStations.size(); i++) {//берем текущую станцию
+            for (int j = 1; j < getStations.size(); j++) {//берем следующую станцию
+                String str1 = getStations.get(i).substring(11);//подстрока название первой станции
+                String str11 = getStations.get(i).substring(8, 9);//подстрока номер первой линии
+                String str2 = getStations.get(j).substring(11);//подстрока название второй станции
+                String str22 = getStations.get(j).substring(8, 9);//подстрока номер второй линии
+                if (str1.equals(str2) && !str11.equals(str22)//имена ровны номера не ровны
+                        && getLine.get(str11) != null && getLine.get(str22) != null
+                ) {
+                    System.out.println(
+                            "станция " +
+                                    str1 +
+                                    ", переход между ветками  "
+                                    + " " + getLine.get(str11) + " и "
+                                    + " " + getLine.get(str22) + "  на станцию " +
+                                    str2
                             //+ (metroLines.toString())
                     );
                 }
             }
         }
-        System.out.println();
-        System.out.println( metroLines.get(0));
+        System.out.println("****************************************************");
 
+        JSONObject result  = new JSONObject();
+        result = JsonFrom.listLinesStations(getStations);
 
+        System.out.println(result);
+        JSONArray arr = JsonFrom.listConnections(getStations);
+        System.out.println(arr);
+        System.out.println("======================================================");
+        JSONArray arr1 = JsonFrom.metroLines(metroLines);
+        System.out.println(arr1);
+        System.out.println("======================================================");
+        JSONObject object = JsonFrom.listStationsAndLines()
     }
 
 }

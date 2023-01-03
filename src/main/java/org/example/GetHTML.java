@@ -7,6 +7,8 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GetHTML {
 Document doc;
@@ -22,21 +24,19 @@ Document doc;
     }
 
  class GetLines {
-        String numberLine;
-        String metroLine;
-      ArrayList getMetroLine() {
-          ArrayList<String> list = new ArrayList<>();
+
+      HashMap<String, String> getMetroLine() {
+          HashMap<String, String> list = new HashMap<>();
 
           Elements elements = doc.select("span.js-metro-line");
-          //String name;
-          //String number;
-          String result;
+          String lineName;
+          String lineNumber;
           for(Element element: elements){
-              StringBuilder builder = new StringBuilder();
-              metroLine = element.select("span.js-metro-line").html();
-              numberLine = element.attr("data-line");
-              result = builder.append(metroLine).append(" ").append(numberLine).toString();
-              list.add(result);
+              lineNumber = element.attr("data-line");
+              lineName = element.select("span.js-metro-line").text();
+             // if(lineNumber.length() != 0 && lineName.length() != 0) {
+                  list.put(lineNumber, lineName);
+             // }
           }
             return list;
         }
