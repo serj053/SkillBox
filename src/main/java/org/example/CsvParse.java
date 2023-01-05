@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CsvParse {
 
-    public List<StationDate> stationLaunchDate(ArrayList<StationDate> stationDates, String path) {
+    public ArrayList<StationDate> stationLaunchDate(ArrayList<StationDate> stationDates, String path) {
         /*получаем файл из коллекции для разбора*/
         List<String> lines;
         try {

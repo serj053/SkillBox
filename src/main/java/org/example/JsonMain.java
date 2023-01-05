@@ -6,24 +6,32 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JsonMain {
 
     public static JSONObject JsonMainInformStation(
-            ArrayList<String> stations,                           //берем название линии и станции
-            HashMap<String, String> depth,                        //берем глубину станции
-            ArrayList<CsvParse.StationDate> stationDate) {        //берем дату созданиея
+            ArrayList<String> stations,                          //берем название линии и станции
+            ArrayList<CsvParse.StationDate> stationDate,          //берем дату созданиея
+            HashMap<String, String> stationDepth) {                      //берем глубину станции
 
         JSONArray array = new JSONArray();
         for (String station : stations) {
             JSONObject object = new JSONObject();
-            object.put("name", station.substring(11));
+            String stationName = station.substring(11);
+            object.put("name", stationName);
             object.put("line", station.substring(8, 9));
+            String date = stationDate.stream()
+                    .filter(str -> str.getStationName()
+                            .equals(stationName))
+                    .toList().toString();
+            object.put("date", date);
+            object.put("depth", stationDepth.get(stationName));
+
+            array.add(object);
         }
-
-
         JSONObject stationsInfo = new JSONObject();
-
+        stationsInfo.put("station",array);
         return stationsInfo;
     }
 

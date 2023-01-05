@@ -57,13 +57,13 @@ public class Main {
  /*Обработка CSV файлов */
         System.out.println("выводим значение глубины станции из CSV файла");
         //создаем объект для парсинга
-        stationsDepth jsToList = new stationsDepth();
+        stationsDepth stationsDepth = new stationsDepth();
         HashMap<String, String> listJs = new HashMap<>();
         //передаем в метод путь к JSON файлу и массив для  новых объектов и
         // получаем список объектов полученных из Json файла
-        jsToList.getDepth(listJs, listJsnPath.get(0));
-        jsToList.getDepth(listJs, listJsnPath.get(1));
-        HashMap<String, String> listStationDepth = jsToList.getDepth(listJs, listJsnPath.get(2));
+        stationsDepth.getDepth(listJs, listJsnPath.get(0));
+        stationsDepth.getDepth(listJs, listJsnPath.get(1));
+        HashMap<String, String> listStationDepth = stationsDepth.getDepth(listJs, listJsnPath.get(2));
         System.out.println("++++++++++++++ " + listStationDepth.keySet().size()+ " +++++++++++");
        for(String str : listStationDepth.keySet()){
            System.out.println(str + " " + listStationDepth.get(str));
@@ -76,15 +76,15 @@ public class Main {
         System.out.println("listCsv.get(1) " + listCsv.get(1));
         //получаем список с объектами
         ArrayList<CsvParse.StationDate> stationDate = new ArrayList<>();
-        List<CsvParse.StationDate> list;
+        ArrayList<CsvParse.StationDate> listDate;
         CsvParse csvParse = new CsvParse();
         csvParse.stationLaunchDate(stationDate, listCsv.get(0));
         csvParse.stationLaunchDate(stationDate, listCsv.get(1));
-        list = csvParse.stationLaunchDate(stationDate, listCsv.get(2));
+        listDate = csvParse.stationLaunchDate(stationDate, listCsv.get(2));
         /*форматируем дату*/
         SimpleDateFormat simpleFormat = new SimpleDateFormat("dd.MM.yyyy");
         AtomicInteger nn = new AtomicInteger();
-        list.forEach(o -> System.out.println(nn.getAndIncrement() + "  " +
+        listDate.forEach(o -> System.out.println(nn.getAndIncrement() + "  " +
                 o.getStationName() + "  " + simpleFormat.format(o.getDate())));
         System.out.println("\n");
 
@@ -154,6 +154,11 @@ public class Main {
         System.out.println("  Result======================================================");
         JSONObject object = JsonMain.listStationsAndLines(lineNumberStationName, lineNumberLineName);
         System.out.println(object);
+
+        System.out.println("JsonMain ================================================");
+        JSONObject mainJson = new JSONObject();
+        mainJson = JsonMain.JsonMainInformStation(lineNumberStationName, listDate, listStationDepth);
+        System.out.println(mainJson);
     }
 
 }
