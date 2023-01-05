@@ -6,12 +6,12 @@ import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 
 public class Main {
@@ -21,27 +21,27 @@ public class Main {
 
 
 
-        /*получаем со страницы данные - линии Московского метро и ее номер
+ /*получаем со страницы данные - линии Московского метро и ее номер
          *                             - станции московского метро и  номер линии*/
         System.out.println("*получаем со страницы данные\n " +
                 "- линии Московского метро и ее номер");
         GetHTML getHTML = new GetHTML();
-        HashMap<String, String> metroLines ;
-        metroLines = getHTML.new GetLines().getMetroLine();
-        metroLines.entrySet().stream()
+        HashMap<String, String> lineNumberLineName ;
+        lineNumberLineName = getHTML.new GetLines().linesNumbersLinesNames();
+        lineNumberLineName.entrySet().stream()
                 .map(m -> {
                     System.out.println(m.getKey() + "  " + m.getValue());
                     return 0;
                 }).toList();
 
         System.out.println();
-        System.out.println("-название станций и номер линий");
+        System.out.println("-название станций и номер линий------------------------------------");
         System.out.println();
-        ArrayList<String> metroStations = getHTML.new GetStations().getMetroStation();
-        getHTML.new GetStations().getMetroStation().forEach(System.out::println);
+        ArrayList<String> lineNumberStationName = getHTML.new GetStations().lineNumbersStationsNames();
+        lineNumberStationName.forEach(System.out::println);
         System.out.println();
 
-        /*Выводим список путей файлов с определнным расширением */
+ /*Выводим список путей файлов с определнным расширением */
         System.out.println("/*Выводим список файлов с определнным расширением */");
         FindFileInDirectory filesJs = new FindFileInDirectory();
         List<String> listJsnPath = new ArrayList<>();
@@ -54,36 +54,38 @@ public class Main {
         listCsv.forEach(System.out::println);
         System.out.println("\n");
 
-        /*Парсинг JSON файла выводим объекты полученные из JSON  файла *****/
-        System.out.println("/*Парсинг JSON файла выводим объекты полученные из JSON  файла *****/");
+ /*Обработка CSV файлов */
+        System.out.println("выводим значение глубины станции из CSV файла");
         //создаем объект для парсинга
-        JsParse jsObj = new JsParse();
-        ArrayList<JsParse.StationDepth> listJs = new ArrayList<>();
+        stationsDepth jsToList = new stationsDepth();
+        HashMap<String, String> listJs = new HashMap<>();
         //передаем в метод путь к JSON файлу и массив для  новых объектов и
         // получаем список объектов полученных из Json файла
-        jsObj.getJsonObjects(listJs, listJsnPath.get(0));
-        jsObj.getJsonObjects(listJs, listJsnPath.get(1));
-        List<JsParse.StationDepth> listStationDepth = jsObj.getJsonObjects(listJs, listJsnPath.get(2));
-        for (int i = 0; i < listStationDepth.size(); i++) {
-            System.out.println(i + "   station " + listStationDepth.get(i).getStation()
-                    + ",  depth " + listStationDepth.get(i).getDepth());
-        }
+        jsToList.getDepth(listJs, listJsnPath.get(0));
+        jsToList.getDepth(listJs, listJsnPath.get(1));
+        HashMap<String, String> listStationDepth = jsToList.getDepth(listJs, listJsnPath.get(2));
+        System.out.println("++++++++++++++ " + listStationDepth.keySet().size()+ " +++++++++++");
+       for(String str : listStationDepth.keySet()){
+           System.out.println(str + " " + listStationDepth.get(str));
+       }
 
         System.out.println("\n");
 
         /*Парсинг CSV фала - выводим объекты полученные из CSV файла*/
-        System.out.println("/*Парсинг CSV фала - выводим объекты полученные из CSV файла*/");
+        System.out.println("/*Парсинг CSV фала - выводим даты постройки станций полученные из CSV файла*/");
         System.out.println("listCsv.get(1) " + listCsv.get(1));
         //получаем список с объектами
         ArrayList<CsvParse.StationDate> stationDate = new ArrayList<>();
         List<CsvParse.StationDate> list;
         CsvParse csvParse = new CsvParse();
-        csvParse.createObjectFromCsv(stationDate, listCsv.get(0));
-        csvParse.createObjectFromCsv(stationDate, listCsv.get(1));
-        list = csvParse.createObjectFromCsv(stationDate, listCsv.get(2));
+        csvParse.stationLaunchDate(stationDate, listCsv.get(0));
+        csvParse.stationLaunchDate(stationDate, listCsv.get(1));
+        list = csvParse.stationLaunchDate(stationDate, listCsv.get(2));
+        /*форматируем дату*/
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("dd.MM.yyyy");
         AtomicInteger nn = new AtomicInteger();
         list.forEach(o -> System.out.println(nn.getAndIncrement() + "  " +
-                o.getStationName() + "  " + o.getDate()));
+                o.getStationName() + "  " + simpleFormat.format(o.getDate())));
         System.out.println("\n");
 
         /*Получаем JSON файлы из объектов находящихся в коллекциях
@@ -112,15 +114,15 @@ public class Main {
 
         GetHTML html = new GetHTML();
         Map<String, String> getLine = new HashMap<>();
-        ArrayList<String> getStations = new ArrayList<>();
-        getLine = html.new GetLines().getMetroLine();
-        getStations = html.new GetStations().getMetroStation();
-        for (int i = 0; i < getStations.size(); i++) {//берем текущую станцию
-            for (int j = 1; j < getStations.size(); j++) {//берем следующую станцию
-                String str1 = getStations.get(i).substring(11);//подстрока название первой станции
-                String str11 = getStations.get(i).substring(8, 9);//подстрока номер первой линии
-                String str2 = getStations.get(j).substring(11);//подстрока название второй станции
-                String str22 = getStations.get(j).substring(8, 9);//подстрока номер второй линии
+        //ArrayList<String> stationsNamesLines = new ArrayList<>();
+        getLine = html.new GetLines().linesNumbersLinesNames();
+        //stationsNamesLines = html.new GetStations().stationsNamesLinenumbers();
+        for (int i = 0; i < lineNumberStationName.size(); i++) {//берем текущую станцию
+            for (int j = 1; j < lineNumberStationName.size(); j++) {//берем следующую станцию
+                String str1 = lineNumberStationName.get(i).substring(11);//подстрока название первой станции
+                String str11 = lineNumberStationName.get(i).substring(8, 9);//подстрока номер первой линии
+                String str2 = lineNumberStationName.get(j).substring(11);//подстрока название второй станции
+                String str22 = lineNumberStationName.get(j).substring(8, 9);//подстрока номер второй линии
                 if (str1.equals(str2) && !str11.equals(str22)//имена ровны номера не ровны
                         && getLine.get(str11) != null && getLine.get(str22) != null
                 ) {
@@ -136,19 +138,22 @@ public class Main {
                 }
             }
         }
-        System.out.println("****************************************************");
+        System.out.println("\nlistLinesWithStations  ****************************************************");
 
         JSONObject result  = new JSONObject();
-        result = JsonFrom.listLinesStations(getStations);
-
+        result = JsonMain.listLinesWithStations(lineNumberStationName);
         System.out.println(result);
-        JSONArray arr = JsonFrom.listConnections(getStations);
+
+        System.out.println("\ntransferStations  ****************************************************");
+        JSONArray arr = JsonMain.transferStations(lineNumberStationName);
         System.out.println(arr);
-        System.out.println("======================================================");
-        JSONArray arr1 = JsonFrom.metroLines(metroLines);
+
+        System.out.println("metroLines  ======================================================");
+        JSONArray arr1 = JsonMain.metroLines(lineNumberLineName);
         System.out.println(arr1);
-        System.out.println("======================================================");
-        JSONObject object = JsonFrom.listStationsAndLines()
+        System.out.println("  Result======================================================");
+        JSONObject object = JsonMain.listStationsAndLines(lineNumberStationName, lineNumberLineName);
+        System.out.println(object);
     }
 
 }
