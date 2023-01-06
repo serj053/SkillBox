@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GetHTML {
-Document doc;
+    Document doc;
+
     public GetHTML() {
         String address = "https://skillbox-java.github.io/";
         Document doc;
@@ -22,35 +23,50 @@ Document doc;
         this.doc = doc;
     }
 
- class GetLines {
+    class GetLines {
 
-      HashMap<String, String> linesNumbersLinesNames() {
-          HashMap<String, String> list = new HashMap<>();
+        HashMap<String, String> linesNumbersLinesNames() {
+            HashMap<String, String> list = new HashMap<>();
 
-          Elements elements = doc.select("span.js-metro-line");
-          String lineName;
-          String lineNumber;
-          for(Element element: elements){
-              lineNumber = element.attr("data-line");
-              lineName = element.select("span.js-metro-line").text();
-             // if(lineNumber.length() != 0 && lineName.length() != 0) {
-                  list.put(lineNumber, lineName);
-             // }
-          }
+            Elements elements = doc.select("span.js-metro-line");
+            String lineName;
+            String lineNumber;
+            for (Element element : elements) {
+                lineNumber = element.attr("data-line");
+                lineName = element.select("span.js-metro-line").text();
+                // if(lineNumber.length() != 0 && lineName.length() != 0) {
+                list.put(lineNumber, lineName);
+                // }
+            }
             return list;
         }
     }
 
     class GetStations {
-        ArrayList lineNumbersStationsNames() {
+
+        HashMap<String, String> lineNumbersStationsNamesHashMap(){
+            HashMap<String, String> map = new HashMap<>();
+            String line;
+            Elements names = doc.select("div.js-metro-stations");
+            for (Element el : names) {
+                String lineNumber = el.attr("data-line");
+                Elements elements2 = el.select("span.name");
+                for (Element el2 : elements2) {
+                   // line = "Линия  №" + lineNumber + "  " + el2.text();
+                    map.put(el2.text(), lineNumber);
+                }
+            }
+            return map;
+        }
+        ArrayList lineNumbersStationsNamesArrList() {
             ArrayList<String> list = new ArrayList<>();
             String line;
             Elements names = doc.select("div.js-metro-stations");
             for (Element el : names) {
                 String lineNumber = el.attr("data-line");
                 Elements elements2 = el.select("span.name");
-                for(Element el2 : elements2){
-                    line = "Линия  №" + lineNumber + "  "  +el2.text();
+                for (Element el2 : elements2) {
+                    line = "Линия  №" + lineNumber + "  " + el2.text();
                     list.add(line);
                 }
             }

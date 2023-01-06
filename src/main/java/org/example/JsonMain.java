@@ -3,6 +3,7 @@ package org.example;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,27 +12,30 @@ import java.util.stream.Collectors;
 public class JsonMain {
 
     public static JSONObject JsonMainInformStation(
-            ArrayList<String> stations,                          //берем название линии и станции
+            HashMap<String, String> stationsFromHashMap,         //берем номер линии и имя станции
+            HashMap<String, String> nameStationNumberLine,      //берем имя станции номер линии
             ArrayList<CsvParse.StationDate> stationDate,          //берем дату созданиея
             HashMap<String, String> stationDepth) {                      //берем глубину станции
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         JSONArray array = new JSONArray();
-        for (String station : stations) {
+        System.out.println("size  " + stationDepth.keySet().size());
+        for (String station : stationDepth.keySet()) {
             JSONObject object = new JSONObject();
-            String stationName = station.substring(11);
-            object.put("name", stationName);
-            object.put("line", station.substring(8, 9));
+            // String stationLine = stationsFromHashMap.get(station);
+            object.put("name", station);
+            object.put("line", (nameStationNumberLine.get(station)));
             String date = stationDate.stream()
-                    .filter(str -> str.getStationName()
-                            .equals(stationName))
+                    .filter(str -> str.getStationName().equals(station))
+                    .map(d -> dateFormat.format(d.getDate()))
                     .toList().toString();
             object.put("date", date);
-            object.put("depth", stationDepth.get(stationName));
+            object.put("depth", stationDepth.get(station));
 
             array.add(object);
         }
         JSONObject stationsInfo = new JSONObject();
-        stationsInfo.put("station",array);
+        stationsInfo.put("station", array);
         return stationsInfo;
     }
 

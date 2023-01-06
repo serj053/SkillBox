@@ -10,8 +10,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import static sun.nio.ch.DatagramChannelImpl.AbstractSelectableChannels.forEach;
 
 
 public class Main {
@@ -35,11 +37,16 @@ public class Main {
                 }).toList();
 
         System.out.println();
-        System.out.println("-название станций и номер линий------------------------------------");
+        System.out.println("-  номер линий название станций------------------------------------");
         System.out.println();
-        ArrayList<String> lineNumberStationName = getHTML.new GetStations().lineNumbersStationsNames();
+        ArrayList<String> lineNumberStationName = getHTML.new GetStations().lineNumbersStationsNamesArrList();
         lineNumberStationName.forEach(System.out::println);
         System.out.println();
+ /*передаем lineNumberStations в HashMap для фильтрации повторяющихся имен станций*/
+         HashMap<String, String> lineStationsHM = new HashMap<>();
+         for(String str : lineNumberStationName){
+
+         }
 
  /*Выводим список путей файлов с определнным расширением */
         System.out.println("/*Выводим список файлов с определнным расширением */");
@@ -113,9 +120,10 @@ public class Main {
 
 
         GetHTML html = new GetHTML();
-        Map<String, String> getLine = new HashMap<>();
+        /*ключ-имя станции, значение - номер линии */
+        HashMap<String, String>  nameStationNumberLine= new HashMap<>();
         //ArrayList<String> stationsNamesLines = new ArrayList<>();
-        getLine = html.new GetLines().linesNumbersLinesNames();
+        HashMap<String, String> getLine = html.new GetLines().linesNumbersLinesNames();
         //stationsNamesLines = html.new GetStations().stationsNamesLinenumbers();
         for (int i = 0; i < lineNumberStationName.size(); i++) {//берем текущую станцию
             for (int j = 1; j < lineNumberStationName.size(); j++) {//берем следующую станцию
@@ -123,6 +131,7 @@ public class Main {
                 String str11 = lineNumberStationName.get(i).substring(8, 9);//подстрока номер первой линии
                 String str2 = lineNumberStationName.get(j).substring(11);//подстрока название второй станции
                 String str22 = lineNumberStationName.get(j).substring(8, 9);//подстрока номер второй линии
+                nameStationNumberLine.put(str2, str22);
                 if (str1.equals(str2) && !str11.equals(str22)//имена ровны номера не ровны
                         && getLine.get(str11) != null && getLine.get(str22) != null
                 ) {
@@ -156,9 +165,27 @@ public class Main {
         System.out.println(object);
 
         System.out.println("JsonMain ================================================");
+        GetHTML getHtml = new GetHTML();
+        HashMap<String, String> stationsFromHashMap =
+                getHtml. new GetStations().lineNumbersStationsNamesHashMap();
+
         JSONObject mainJson = new JSONObject();
-        mainJson = JsonMain.JsonMainInformStation(lineNumberStationName, listDate, listStationDepth);
+        /*из коллекции nameStationNumberLine убрать те элементы которыч нет в коллекции listStationDepth*/
+        for(String str: listStationDepth.keySet()){
+
+        }
+        mainJson = JsonMain.JsonMainInformStation(stationsFromHashMap,nameStationNumberLine, listDate, listStationDepth);
         System.out.println(mainJson);
+        //lineNumberLineName lineNumbersStationsNamesHashMap
+        System.out.println(mainJson);
+        System.out.println("+++++++++++++++++++++++++++++");
+        System.out.println("size()  " + nameStationNumberLine.size());
+        System.out.println(nameStationNumberLine);
+        System.out.println("lineNumbersStationsNamesHashMap(){} =====================================");
+
+        GetHTML.GetStations getStations = new GetHTML().new GetStations();
+        System.out.println("size() " + getStations.lineNumbersStationsNamesHashMap().size());
+        System.out.println(getStations.lineNumbersStationsNamesHashMap());
     }
 
 }
