@@ -4,36 +4,41 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class JsonMain {
 
     public static JSONObject JsonMainInformStation(
-            HashMap<String, String> stationsFromHashMap,         //берем номер линии и имя станции
-            HashMap<String, String> nameStationNumberLine,      //берем имя станции номер линии
-            ArrayList<CsvParse.StationDate> stationDate,          //берем дату созданиея
-            HashMap<String, String> stationDepth) {                      //берем глубину станции
+            HashMap<String, String> linesNumbersLinesNames,         // номер линии и имя линии
+            HashMap<String, String> nameStationNumberLine,      // имя станции = номер линии
+            ArrayList<CsvParse.StationDate> stationDate,          //имя станции =  дата созданиея
+            HashMap<String, String> stationDepth,
+            HashMap<String, Boolean> hasInterconnection) {                      //имя станции = глубина станции
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         JSONArray array = new JSONArray();
+
         System.out.println("size  " + stationDepth.keySet().size());
+
         for (String station : stationDepth.keySet()) {
-            JSONObject object = new JSONObject();
-            // String stationLine = stationsFromHashMap.get(station);
+            Map object =new LinkedHashMap();
+            //JSONObject object = new JSONObject();
             object.put("name", station);
-            object.put("line", (nameStationNumberLine.get(station)));
+            if (nameStationNumberLine.get(station) != null) {
+                object.put("line", linesNumbersLinesNames.get(nameStationNumberLine.get(station)));
+            }
             String date = stationDate.stream()
                     .filter(str -> str.getStationName().equals(station))
                     .map(d -> dateFormat.format(d.getDate()))
                     .toList().toString();
             object.put("date", date);
             object.put("depth", stationDepth.get(station));
+            object.put("interconnection", hasInterconnection.get(station));
 
             array.add(object);
         }
+
         JSONObject stationsInfo = new JSONObject();
         stationsInfo.put("station", array);
         return stationsInfo;

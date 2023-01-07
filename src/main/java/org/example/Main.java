@@ -21,12 +21,12 @@ public class Main {
 
 
 
- /*получаем со страницы данные - линии Московского метро и ее номер
+        /*получаем со страницы данные - линии Московского метро и ее номер
          *                             - станции московского метро и  номер линии*/
         System.out.println("*получаем со страницы данные\n " +
                 "- линии Московского метро и ее номер");
         GetHTML getHTML = new GetHTML();
-        HashMap<String, String> lineNumberLineName ;
+        HashMap<String, String> lineNumberLineName;
         lineNumberLineName = getHTML.new GetLines().linesNumbersLinesNames();
         lineNumberLineName.entrySet().stream()
                 .map(m -> {
@@ -38,15 +38,20 @@ public class Main {
         System.out.println("-  номер линий название станций------------------------------------");
         System.out.println();
         ArrayList<String> lineNumberStationName = getHTML.new GetStations().lineNumbersStationsNamesArrList();
-        lineNumberStationName.forEach(System.out::println);
+        //lineNumberStationName.forEach(System.out::println);
+        int nnn = 0;
+        for (String str : lineNumberStationName) {
+            nnn++;
+            System.out.println(nnn + " " + str);
+        }
         System.out.println();
- /*передаем lineNumberStations в HashMap для фильтрации повторяющихся имен станций*/
-         HashMap<String, String> lineStationsHM = new HashMap<>();
-         for(String str : lineNumberStationName){
+        /*передаем lineNumberStations в HashMap для фильтрации повторяющихся имен станций*/
+        HashMap<String, String> lineStationsHM = new HashMap<>();
+        for (String str : lineNumberStationName) {
 
-         }
+        }
 
- /*Выводим список путей файлов с определнным расширением */
+        /*Выводим список путей файлов с определнным расширением */
         System.out.println("/*Выводим список файлов с определнным расширением */");
         FindFileInDirectory filesJs = new FindFileInDirectory();
         List<String> listJsnPath = new ArrayList<>();
@@ -59,7 +64,7 @@ public class Main {
         listCsv.forEach(System.out::println);
         System.out.println("\n");
 
- /*Обработка CSV файлов */
+        /*Обработка CSV файлов */
         System.out.println("выводим значение глубины станции из CSV файла");
         //создаем объект для парсинга
         stationsDepth stationsDepth = new stationsDepth();
@@ -69,10 +74,10 @@ public class Main {
         stationsDepth.getDepth(listJs, listJsnPath.get(0));
         stationsDepth.getDepth(listJs, listJsnPath.get(1));
         HashMap<String, String> listStationDepth = stationsDepth.getDepth(listJs, listJsnPath.get(2));
-        System.out.println("++++++++++++++ " + listStationDepth.keySet().size()+ " +++++++++++");
-       for(String str : listStationDepth.keySet()){
-           System.out.println(str + " " + listStationDepth.get(str));
-       }
+        System.out.println("++++++++++++++ " + listStationDepth.keySet().size() + " +++++++++++");
+        for (String str : listStationDepth.keySet()) {
+            System.out.println(str + " " + listStationDepth.get(str));
+        }
 
         System.out.println("\n");
 
@@ -112,42 +117,50 @@ public class Main {
         getHTML.new GetStations().getMetroStation().forEach(System.out::println);
         System.out.println();
         *
-        * getLine - линии метро список
+        * linesNumbersLinesNames - линии метро список
         * getStations - станции метро список
         * */
 
 
         GetHTML html = new GetHTML();
         /*ключ-имя станции, значение - номер линии */
-        HashMap<String, String>  nameStationNumberLine= new HashMap<>();
+        HashMap<String, String> nameStationNumberLine = new HashMap<>();
+        /*имя станции -> переход есть? (true, false)*/
+        HashMap<String, Boolean> hasInterconnection = new HashMap<>();
         //ArrayList<String> stationsNamesLines = new ArrayList<>();
-        HashMap<String, String> getLine = html.new GetLines().linesNumbersLinesNames();
+        HashMap<String, String> linesNumbersLinesNames = html.new GetLines().linesNumbersLinesNames();
         //stationsNamesLines = html.new GetStations().stationsNamesLinenumbers();
+        int n = 0;
+        boolean hasInterconnect = false;
         for (int i = 0; i < lineNumberStationName.size(); i++) {//берем текущую станцию
             for (int j = 1; j < lineNumberStationName.size(); j++) {//берем следующую станцию
                 String str1 = lineNumberStationName.get(i).substring(11);//подстрока название первой станции
-                String str11 = lineNumberStationName.get(i).substring(8, 9);//подстрока номер первой линии
+                String str11 = lineNumberStationName.get(i).substring(8, 10);//подстрока номер первой линии
                 String str2 = lineNumberStationName.get(j).substring(11);//подстрока название второй станции
-                String str22 = lineNumberStationName.get(j).substring(8, 9);//подстрока номер второй линии
-                nameStationNumberLine.put(str2, str22);
+                String str22 = lineNumberStationName.get(j).substring(8, 10);//подстрока номер второй линии
+                nameStationNumberLine.put(str1.trim(), str11.trim());
+
                 if (str1.equals(str2) && !str11.equals(str22)//имена ровны номера не ровны
-                        && getLine.get(str11) != null && getLine.get(str22) != null
+                        && linesNumbersLinesNames.get(str11) != null && linesNumbersLinesNames.get(str22) != null
                 ) {
+                    n++;
                     System.out.println(
-                            "станция " +
+                            n + " " +
+                                    "станция " +
                                     str1 +
                                     ", переход между ветками  "
-                                    + " " + getLine.get(str11) + " и "
-                                    + " " + getLine.get(str22) + "  на станцию " +
+                                    + " " + linesNumbersLinesNames.get(str11) + " и "
+                                    + " " + linesNumbersLinesNames.get(str22) + "  на станцию " +
                                     str2
-                            //+ (metroLines.toString())
                     );
+                    hasInterconnect = true;
                 }
+                hasInterconnection.put(str1.trim(), hasInterconnect);
             }
         }
         System.out.println("\nlistLinesWithStations  ****************************************************");
 
-        JSONObject result  = new JSONObject();
+        JSONObject result = new JSONObject();
         result = JsonMain.listLinesWithStations(lineNumberStationName);
         System.out.println(result);
 
@@ -165,25 +178,39 @@ public class Main {
         System.out.println("JsonMain ================================================");
         GetHTML getHtml = new GetHTML();
         HashMap<String, String> stationsFromHashMap =
-                getHtml. new GetStations().lineNumbersStationsNamesHashMap();
+                getHtml.new GetStations().lineNumbersStationsNamesHashMap();
+
 
         JSONObject mainJson = new JSONObject();
         /*из коллекции nameStationNumberLine убрать те элементы которыч нет в коллекции listStationDepth*/
-        for(String str: listStationDepth.keySet()){
+        for (String str : listStationDepth.keySet()) {
 
         }
-        mainJson = JsonMain.JsonMainInformStation(stationsFromHashMap,nameStationNumberLine, listDate, listStationDepth);
+        mainJson = JsonMain.JsonMainInformStation(linesNumbersLinesNames
+                , nameStationNumberLine
+                , listDate
+                , listStationDepth
+                , hasInterconnection);
+
         System.out.println(mainJson);
         //lineNumberLineName lineNumbersStationsNamesHashMap
         System.out.println(mainJson);
+
+
         System.out.println("+++++++++++++++++++++++++++++");
-        System.out.println("size()  " + nameStationNumberLine.size());
-        System.out.println(nameStationNumberLine);
+        System.out.println("size()  nameStationNumberLine " + nameStationNumberLine.size());
+        nameStationNumberLine.entrySet().stream().forEach(s -> System.out.println(s.getKey() + " " + s.getValue()));
+        //System.out.println(nameStationNumberLine);
+        System.out.println();
         System.out.println("lineNumbersStationsNamesHashMap(){} =====================================");
 
         GetHTML.GetStations getStations = new GetHTML().new GetStations();
         System.out.println("size() " + getStations.lineNumbersStationsNamesHashMap().size());
         System.out.println(getStations.lineNumbersStationsNamesHashMap());
+
+        System.out.println("\n==========================================");
+        System.out.println("hasInterconnection.size()  " + hasInterconnection.size());
+        System.out.println(hasInterconnection);
     }
 
 }
