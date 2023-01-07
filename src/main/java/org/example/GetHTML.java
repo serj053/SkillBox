@@ -34,9 +34,7 @@ public class GetHTML {
             for (Element element : elements) {
                 lineNumber = element.attr("data-line");
                 lineName = element.select("span.js-metro-line").text();
-                // if(lineNumber.length() != 0 && lineName.length() != 0) {
                 list.put(lineNumber, lineName);
-                // }
             }
             return list;
         }
@@ -44,7 +42,7 @@ public class GetHTML {
 
     class GetStations {
 
-        HashMap<String, String> lineNumbersStationsNamesHashMap(){
+        HashMap<String, String> lineNumbersStationsNamesHashMap() {
             HashMap<String, String> map = new HashMap<>();
             String line;
             Elements names = doc.select("div.js-metro-stations");
@@ -52,12 +50,12 @@ public class GetHTML {
                 String lineNumber = el.attr("data-line");
                 Elements elements2 = el.select("span.name");
                 for (Element el2 : elements2) {
-                   // line = "Линия  №" + lineNumber + "  " + el2.text();
                     map.put(el2.text(), lineNumber);
                 }
             }
             return map;
         }
+
         ArrayList lineNumbersStationsNamesArrList() {
             ArrayList<String> list = new ArrayList<>();
             String line;

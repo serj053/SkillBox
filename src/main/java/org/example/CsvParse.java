@@ -22,7 +22,6 @@ public class CsvParse {
         /*Готовим формат для даты*/
         String dateFormat = "dd.MM.yyyy";
         /*Готовим список для объектов*/
-        // Pattern pattern = Pattern.compile("[\\w\\s]*\\d{2}.\\d{2}.\\d{4}");
         for (String line : lines) {
             String[] elements = line.split(",");
             /*отсортировываем строки не подходящие для создания объекта*/
@@ -40,8 +39,8 @@ public class CsvParse {
                 continue;
             }
             int flag = 0;
-            for (int i = 0; i < stationDates.size(); i++) {
-                if (!stationDates.get(i).stationName.equals(elements[0])) {
+            for (StationDate stationDate : stationDates) {
+                if (!stationDate.stationName.equals(elements[0])) {
                     continue;
                 }
                 flag++;

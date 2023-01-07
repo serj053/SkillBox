@@ -11,20 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 
 public class Main {
 
     public static void main(String[] args) throws IOException, ParseException {
 
 
-
-
-        /*получаем со страницы данные - линии Московского метро и ее номер
-         *                             - станции московского метро и  номер линии*/
-        System.out.println("*получаем со страницы данные\n " +
-                "- линии Московского метро и ее номер");
+        System.out.println("/*получаем со страницы данные - номер линии Московского метро и имя линии метро*/");
         GetHTML getHTML = new GetHTML();
         HashMap<String, String> lineNumberLineName;
         lineNumberLineName = getHTML.new GetLines().linesNumbersLinesNames();
@@ -32,65 +25,61 @@ public class Main {
                 .map(m -> {
                     System.out.println(m.getKey() + "  " + m.getValue());
                     return 0;
-                }).toList();
+                });
 
         System.out.println();
-        System.out.println("-  номер линий название станций------------------------------------");
+        System.out.println("-  номера линий и  название станций------------------------------------");
         System.out.println();
         ArrayList<String> lineNumberStationName = getHTML.new GetStations().lineNumbersStationsNamesArrList();
-        //lineNumberStationName.forEach(System.out::println);
         int nnn = 0;
         for (String str : lineNumberStationName) {
             nnn++;
             System.out.println(nnn + " " + str);
         }
         System.out.println();
-        /*передаем lineNumberStations в HashMap для фильтрации повторяющихся имен станций*/
-        HashMap<String, String> lineStationsHM = new HashMap<>();
-        for (String str : lineNumberStationName) {
-
-        }
 
         /*Выводим список путей файлов с определнным расширением */
         System.out.println("/*Выводим список файлов с определнным расширением */");
+        /*рекурсино проходим по папкам*/
         FindFileInDirectory filesJs = new FindFileInDirectory();
+
         List<String> listJsnPath = new ArrayList<>();
-        List<String> listCsv = new ArrayList<>();
-        /*возвращает список путей файлов из выбранной папки с определенным расширением*/
+        List<String> listCsvPath = new ArrayList<>();
+        /*возвращает список путей файлов из выбранной папки с  расширением JSON*/
         filesJs.find(new File("data"), listJsnPath, "json");
         listJsnPath.forEach(System.out::println);
         System.out.println();
-        filesJs.find(new File("data"), listCsv, "csv");
-        listCsv.forEach(System.out::println);
+        /*возвращает список путей файлов из выбранной папки с  расширением CSV*/
+        filesJs.find(new File("data"), listCsvPath, "csv");
+        listCsvPath.forEach(System.out::println);
         System.out.println("\n");
 
         /*Обработка CSV файлов */
         System.out.println("выводим значение глубины станции из CSV файла");
         //создаем объект для парсинга
         stationsDepth stationsDepth = new stationsDepth();
-        HashMap<String, String> listJs = new HashMap<>();
+        //создаем коллекцию для данных
+        HashMap<String, String> listCollectStationsDepths = new HashMap<>();
         //передаем в метод путь к JSON файлу и массив для  новых объектов и
         // получаем список объектов полученных из Json файла
-        stationsDepth.getDepth(listJs, listJsnPath.get(0));
-        stationsDepth.getDepth(listJs, listJsnPath.get(1));
-        HashMap<String, String> listStationDepth = stationsDepth.getDepth(listJs, listJsnPath.get(2));
+        stationsDepth.getDepth(listCollectStationsDepths, listJsnPath.get(0));
+        stationsDepth.getDepth(listCollectStationsDepths, listJsnPath.get(1));
+        HashMap<String, String> listStationDepth = stationsDepth.getDepth(listCollectStationsDepths, listJsnPath.get(2));
         System.out.println("++++++++++++++ " + listStationDepth.keySet().size() + " +++++++++++");
         for (String str : listStationDepth.keySet()) {
             System.out.println(str + " " + listStationDepth.get(str));
         }
-
         System.out.println("\n");
 
-        /*Парсинг CSV фала - выводим объекты полученные из CSV файла*/
         System.out.println("/*Парсинг CSV фала - выводим даты постройки станций полученные из CSV файла*/");
-        System.out.println("listCsv.get(1) " + listCsv.get(1));
+        System.out.println("listCsv.get(1) " + listCsvPath.get(1));
         //получаем список с объектами
-        ArrayList<CsvParse.StationDate> stationDate = new ArrayList<>();
+        ArrayList<CsvParse.StationDate> listCollectStationDate = new ArrayList<>();
         ArrayList<CsvParse.StationDate> listDate;
         CsvParse csvParse = new CsvParse();
-        csvParse.stationLaunchDate(stationDate, listCsv.get(0));
-        csvParse.stationLaunchDate(stationDate, listCsv.get(1));
-        listDate = csvParse.stationLaunchDate(stationDate, listCsv.get(2));
+        csvParse.stationLaunchDate(listCollectStationDate, listCsvPath.get(0));
+        csvParse.stationLaunchDate(listCollectStationDate, listCsvPath.get(1));
+        listDate = csvParse.stationLaunchDate(listCollectStationDate, listCsvPath.get(2));
         /*форматируем дату*/
         SimpleDateFormat simpleFormat = new SimpleDateFormat("dd.MM.yyyy");
         AtomicInteger nn = new AtomicInteger();
@@ -101,27 +90,7 @@ public class Main {
         /*Получаем JSON файлы из объектов находящихся в коллекциях
          * ArrayList<JsParse.StationDepth> listStationDepth из JSON файлов
          * List<CsvParse.StationDate> list   из CSV файлов*/
-        System.out.println("/*Получаем JSON файлы из объектов*/");
-        JSONObject obj = new JSONObject();
-        obj.put("first", "second");
-        System.out.println(obj);
-        /*
-        *
-        * GetHTML getHTML = new GetHTML();
-        ArrayList<String> metroLines = getHTML.new GetLines().getMetroLine();
-        getHTML.new GetLines().getMetroLine().forEach(System.out::println);
-        System.out.println();
-        System.out.println("-название станций и номер линий");
-        System.out.println();
-        ArrayList<String> metroStations = getHTML.new GetStations().getMetroStation();
-        getHTML.new GetStations().getMetroStation().forEach(System.out::println);
-        System.out.println();
-        *
-        * linesNumbersLinesNames - линии метро список
-        * getStations - станции метро список
-        * */
-
-
+        System.out.println("/*Получаем станции где есть переходы между линиями*/");
         GetHTML html = new GetHTML();
         /*ключ-имя станции, значение - номер линии */
         HashMap<String, String> nameStationNumberLine = new HashMap<>();
@@ -168,24 +137,17 @@ public class Main {
         JSONArray arr = JsonMain.transferStations(lineNumberStationName);
         System.out.println(arr);
 
-        System.out.println("metroLines  ======================================================");
+        System.out.println("\nmetroLines  ======================================================");
         JSONArray arr1 = JsonMain.metroLines(lineNumberLineName);
         System.out.println(arr1);
-        System.out.println("  Result======================================================");
-        JSONObject object = JsonMain.listStationsAndLines(lineNumberStationName, lineNumberLineName);
+        System.out.println("\n listLinesAndStations ======================================================");
+        JSONObject object = JsonMain.listLinesFndStations(lineNumberStationName, lineNumberLineName);
         System.out.println(object);
 
-        System.out.println("JsonMain ================================================");
+        System.out.println("\nJsonMainList {stations:[{names:,line:, date:, depth:, ... hasConnection ===============");
         GetHTML getHtml = new GetHTML();
-        HashMap<String, String> stationsFromHashMap =
-                getHtml.new GetStations().lineNumbersStationsNamesHashMap();
 
-
-        JSONObject mainJson = new JSONObject();
-        /*из коллекции nameStationNumberLine убрать те элементы которыч нет в коллекции listStationDepth*/
-        for (String str : listStationDepth.keySet()) {
-
-        }
+        JSONObject mainJson;
         mainJson = JsonMain.JsonMainInformStation(linesNumbersLinesNames
                 , nameStationNumberLine
                 , listDate
@@ -193,24 +155,20 @@ public class Main {
                 , hasInterconnection);
 
         System.out.println(mainJson);
-        //lineNumberLineName lineNumbersStationsNamesHashMap
-        System.out.println(mainJson);
 
-
-        System.out.println("+++++++++++++++++++++++++++++");
-        System.out.println("size()  nameStationNumberLine " + nameStationNumberLine.size());
-        nameStationNumberLine.entrySet().stream().forEach(s -> System.out.println(s.getKey() + " " + s.getValue()));
-        //System.out.println(nameStationNumberLine);
-        System.out.println();
-        System.out.println("lineNumbersStationsNamesHashMap(){} =====================================");
-
-        GetHTML.GetStations getStations = new GetHTML().new GetStations();
-        System.out.println("size() " + getStations.lineNumbersStationsNamesHashMap().size());
-        System.out.println(getStations.lineNumbersStationsNamesHashMap());
-
-        System.out.println("\n==========================================");
-        System.out.println("hasInterconnection.size()  " + hasInterconnection.size());
-        System.out.println(hasInterconnection);
+//        System.out.println("+++++++++++++++++++++++++++++");
+//        System.out.println("size()  nameStationNumberLine " + nameStationNumberLine.size());
+//        nameStationNumberLine.entrySet().stream().forEach(s -> System.out.println(s.getKey() + " " + s.getValue()));
+//        System.out.println();
+//        System.out.println("lineNumbersStationsNamesHashMap(){} =====================================");
+//
+//        GetHTML.GetStations getStations = new GetHTML().new GetStations();
+//        System.out.println("size() " + getStations.lineNumbersStationsNamesHashMap().size());
+//        System.out.println(getStations.lineNumbersStationsNamesHashMap());
+//
+//        System.out.println("\n==========================================");
+//        System.out.println("hasInterconnection.size()  " + hasInterconnection.size());
+//        System.out.println(hasInterconnection);
     }
 
 }

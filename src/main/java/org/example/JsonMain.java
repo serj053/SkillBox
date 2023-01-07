@@ -5,25 +5,21 @@ import org.json.simple.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class JsonMain {
 
     public static JSONObject JsonMainInformStation(
-            HashMap<String, String> linesNumbersLinesNames,         // номер линии и имя линии
-            HashMap<String, String> nameStationNumberLine,      // имя станции = номер линии
-            ArrayList<CsvParse.StationDate> stationDate,          //имя станции =  дата созданиея
-            HashMap<String, String> stationDepth,
-            HashMap<String, Boolean> hasInterconnection) {                      //имя станции = глубина станции
+            HashMap<String, String> linesNumbersLinesNames,          // номер линии и имя линии
+            HashMap<String, String> nameStationNumberLine,           // имя станции = номер линии
+            ArrayList<CsvParse.StationDate> stationDate,             //имя станции =  дата созданиея
+            HashMap<String, String> stationDepth,                    //имя станции = глубина станции
+            HashMap<String, Boolean> hasInterconnection) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         JSONArray array = new JSONArray();
-
-        System.out.println("size  " + stationDepth.keySet().size());
-
+        // System.out.println("size  " + stationDepth.keySet().size());
         for (String station : stationDepth.keySet()) {
-            Map object =new LinkedHashMap();
-            //JSONObject object = new JSONObject();
+            Map object = new LinkedHashMap();
             object.put("name", station);
             if (nameStationNumberLine.get(station) != null) {
                 object.put("line", linesNumbersLinesNames.get(nameStationNumberLine.get(station)));
@@ -34,18 +30,16 @@ public class JsonMain {
                     .toList().toString();
             object.put("date", date);
             object.put("depth", stationDepth.get(station));
-            object.put("interconnection", hasInterconnection.get(station));
+            object.put("hasConnection", hasInterconnection.get(station));
 
             array.add(object);
         }
-
         JSONObject stationsInfo = new JSONObject();
         stationsInfo.put("station", array);
         return stationsInfo;
     }
 
-    public static JSONObject listStationsAndLines(ArrayList<String> lineNumberStationName,
-                                                  // ArrayList<String> metroLinesNamesNumbers,
+    public static JSONObject listLinesFndStations(ArrayList<String> lineNumberStationName,
                                                   HashMap<String, String> lineNumberLineName) {
         JSONObject result = new JSONObject();
         result.put("stations", listLinesWithStations(lineNumberStationName));
@@ -125,7 +119,6 @@ public class JsonMain {
 
             jsArr.add(obj);
         }
-        //result.put("lines", jsArr);
         return jsArr;
     }
 
